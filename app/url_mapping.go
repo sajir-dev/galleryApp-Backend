@@ -5,7 +5,7 @@ import (
 )
 
 func mapUrls() {
-	router.GET("/item/:id", controllers.GetItems)
-	router.POST("/item/:id", controllers.CreateItem)
+	router.GET("/images/", controllers.GetItems)
+	router.POST("/images/", controllers.CreateItem)
 	// router.DELETE("/:user_name", controllers)
 }
