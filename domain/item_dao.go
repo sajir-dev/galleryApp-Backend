@@ -2,7 +2,6 @@ package domain
 
 import (
 	"errors"
-	"fmt"
 )
 
 var (
@@ -14,10 +13,13 @@ var (
 // GetItem ...
 func GetItem(itemID string) (*Item, error) {
 	item := items[itemID]
+	// fmt.Printf("%v, %T", itemID, itemID)
+	// fmt.Println(items["123"])
+	// fmt.Println("domain", item)
 	if item == nil {
 		return nil, errors.New("Item not found")
 	}
-	fmt.Println("domain", item)
+	// fmt.Println("domain", item)
 	return item, nil
 }
 
