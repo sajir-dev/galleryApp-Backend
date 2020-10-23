@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"../domain"
@@ -11,30 +11,46 @@ import (
 
 // GetItems ...
 func GetItems(c *gin.Context) {
-	id := c.Param("id")
-	item, _ := json.Marshal(services.GetItem(id))
+	// id := c.Param("id")
+	images, err := services.GetItems()
 	// fmt.Println("controller", item)
-	c.String(http.StatusOK, string(item))
-}
-
-// CreateItem ...
-func CreateItem(c *gin.Context) {
-	item := domain.Item{}
-	err := c.BindJSON(&item)
-	image, err := services.CreateItem(item.ItemID, item.UserID, item.Title, item.URL)
 	exception := ""
 	if err != nil {
 		exception = err.Error()
 	}
-	c.JSON(200, gin.H{"exception": exception, "data": image})
+	c.JSON(http.StatusOK, gin.H{"exception": exception, "data": images})
 }
 
-// UpdateItem ...
-func UpdateItem(c *gin.Context) {
-
+// CreateItem ...
+func CreateItem(c *gin.Context) {
+	oneImage := domain.OneImage{}
+	exception := ""
+	err := c.BindJSON(&oneImage)
+	fmt.Println(oneImage)
+	if err != nil {
+		exception := "Bad request"
+		c.JSON(200, gin.H{"exception": exception, "data": oneImage})
+		return
+	}
+	_, err = services.CreateItem(oneImage.UserID, oneImage.Label, oneImage.Name)
+	if err != nil {
+		exception = err.Error()
+	}
+	c.JSON(200, gin.H{"exception": exception, "data": oneImage})
 }
+
+// // UpdateItem ...
+// func UpdateItem(c *gin.Context) {
+
+// }
 
 // DeleteItem ...
 func DeleteItem(c *gin.Context) {
-
+	id := c.Param("id")
+	err := services.DeleteItem(id)
+	exception := ""
+	if err != nil {
+		exception = err.Error()
+	}
+	c.JSON(200, gin.H{"exception": exception})
 }

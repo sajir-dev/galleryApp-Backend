@@ -12,5 +12,5 @@ var (
 func StartApp() {
 	mapUrls()
 
-	router.Run(":8080")
+	router.Run(":3030")
 }

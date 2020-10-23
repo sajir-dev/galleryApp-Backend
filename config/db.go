@@ -1,4 +1,4 @@
-package domain
+package config
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 var DB *mgo.Database
 
 var Users *mgo.Collection
-var Items *mgo.Collection
+var Images *mgo.Collection
 
 func init() {
 	db, err := mgo.Dial("mongodb://localhost/galleryApp-db")
@@ -21,11 +21,17 @@ func init() {
 		panic(err)
 	}
 
-	Items = db.DB("galleryApp-db").C("images")
+	Images = db.DB("galleryApp-db").C("images")
 	Users = db.DB("galleryApp-db").C("users")
 
 	fmt.Println("You connected to local mongodb")
+
+	// Items.insert({"user_id":"1001", "title":"a cat", "url":"http://somewhere.in/web"})
 }
+
+// "user_id":"1001",
+// "title":"a cat",
+// "url":"http://somewhere.in/web"
 
 // db.images.insert([
 // 	{

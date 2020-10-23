@@ -3,36 +3,59 @@ package domain
 import (
 	"errors"
 	"fmt"
+
+	"../config"
+	"gopkg.in/mgo.v2/bson"
 )
 
-var (
-	items = map[string]*Item{
-		"123": {"123", "101", "a girl", "https://home.oxfordowl.co.uk/wp-content/uploads/2019/08/how-to-build-a-girl.png"},
-	}
-)
+// var (
+// 	images = map[string]*Image{
+// 		"101": {"101", "a girl", "https://home.oxfordowl.co.uk/wp-content/uploads/2019/08/how-to-build-a-girl.png"},
+// 	}
+// )
+// var images *[]Image
 
-// GetItem ...
-func GetItem(itemID string) (*Item, error) {
-	item := items[itemID]
+// var oneImage *Image
+
+// GetItems ...
+func GetItems() ([]Image, error) {
+	// image := images[itemID]
 	// fmt.Printf("%v, %T", itemID, itemID)
 	// fmt.Println(items["123"])
 	// fmt.Println("domain", item)
-	if item == nil {
-		return nil, errors.New("Item not found")
+	images := []Image{}
+	fmt.Println("before get", images)
+	err := config.Images.Find(bson.M{}).All(&images)
+	fmt.Println("after get", images)
+	if err != nil {
+		return nil, errors.New("Images not found")
 	}
 	// fmt.Println("domain", item)
-	return item, nil
+	return images, nil
 }
 
 // CreateItem ...
-func CreateItem(itemID string, userID string, title string, url string) (*Item, error) {
-	items[itemID] = &Item{itemID, userID, title, url}
-	fmt.Println(items)
-	if items[itemID].Title == title {
-		return items[itemID], nil
+func CreateItem(userID string, label string, name string) (*Image, error) {
+	// images[itemID] = &Image{serID, label, name}
+	// itemJson := json.Marshal({"user_id": userID, "label": label, "name":name})
+
+	oneImage := &OneImage{userID, label, name}
+
+	err := config.Images.Insert(oneImage)
+	if err != nil {
+		return nil, errors.New("Could not create item")
 	}
-	fmt.Println(items)
-	return nil, errors.New("Could not create item")
+
+	var oneImageInserted *Image
+	err = config.Images.Find(bson.M{"name": oneImage.Name}).One(&oneImageInserted)
+	if err != nil {
+		return nil, err
+	}
+	// if items[itemID].Label == label {
+	// 	return items[itemID], nil
+	// }
+	// fmt.Println(images)
+	return oneImageInserted, err
 }
 
 // UpdateItem ...
@@ -41,6 +64,15 @@ func UpdateItem() {
 }
 
 // DeleteItem ...
-func DeleteItem() {
+func DeleteItem(imageID string) error {
+	// delete(items, itemID)
+	// if items[itemID] == nil {
+	// 	return ("deleted" + itemID)
+	// }
 
+	err := config.Images.RemoveId(imageID)
+	if err != nil {
+		return errors.New("could not perform the operation for image " + imageID)
+	}
+	return nil
 }

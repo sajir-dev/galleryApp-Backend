@@ -4,30 +4,32 @@ import (
 	"../domain"
 )
 
-// GetItem ...
-func GetItem(itemID string) *domain.Item {
-	item, _ := domain.GetItem(itemID)
+// GetItems ...
+func GetItems() ([]domain.Image, error) {
+	images, err := domain.GetItems()
 	// fmt.Println("services", item)
-	return item
-}
-
-func GetItems() {
-
-}
-
-// CreateItem ...
-func CreateItem(itemID string, userID string, title string, url string) (*domain.Item, error) {
-	item, err := domain.CreateItem(itemID, userID, title, url)
 	if err != nil {
 		return nil, err
 	}
-	return item, nil
+	return images, nil
 }
 
-func UpdateItems() {
+// GetItems ...
+// func GetItems() {
 
+// }
+
+// CreateItem ...
+func CreateItem(userID string, label string, name string) (*domain.Image, error) {
+	Image, err := domain.CreateItem(userID, label, name)
+	if err != nil {
+		return nil, err
+	}
+	return Image, nil
 }
 
-func DeleteItem() {
-
+// DeleteItem ...
+func DeleteItem(itemID string) error {
+	err := domain.DeleteItem(itemID)
+	return err
 }
