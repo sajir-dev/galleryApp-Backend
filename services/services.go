@@ -14,10 +14,14 @@ func GetItems() ([]domain.Image, error) {
 	return images, nil
 }
 
-// GetItems ...
-// func GetItems() {
-
-// }
+// GetItem ...
+func GetItem(imageID string) (*domain.Image, error) {
+	image, err := domain.GetItem(imageID)
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
+}
 
 // CreateItem ...
 func CreateItem(userID string, label string, name string) (*domain.Image, error) {

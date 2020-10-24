@@ -24,14 +24,25 @@ func GetItems() ([]Image, error) {
 	// fmt.Println(items["123"])
 	// fmt.Println("domain", item)
 	images := []Image{}
-	fmt.Println("before get", images)
+	// fmt.Println("before get", images)
 	err := config.Images.Find(bson.M{}).All(&images)
-	fmt.Println("after get", images)
+	// fmt.Println("after get", images)
 	if err != nil {
 		return nil, errors.New("Images not found")
 	}
 	// fmt.Println("domain", item)
 	return images, nil
+}
+
+// GetItem to get a single image
+func GetItem(id string) (*Image, error) {
+	var image *Image
+	err := config.Images.FindId(bson.ObjectIdHex(id)).One(&image)
+	fmt.Println(image)
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
 }
 
 // CreateItem ...
@@ -40,6 +51,8 @@ func CreateItem(userID string, label string, name string) (*Image, error) {
 	// itemJson := json.Marshal({"user_id": userID, "label": label, "name":name})
 
 	oneImage := &OneImage{userID, label, name}
+	// oneImageJson, _ := json.Marshal(oneImage)
+	// fmt.Println(oneImageJson)
 
 	err := config.Images.Insert(oneImage)
 	if err != nil {
@@ -69,8 +82,10 @@ func DeleteItem(imageID string) error {
 	// if items[itemID] == nil {
 	// 	return ("deleted" + itemID)
 	// }
-
-	err := config.Images.RemoveId(imageID)
+	// var image *Image
+	// err := config.Images.FindId(bson.ObjectIdHex(imageID)).One(&image)
+	// fmt.Println(image)
+	err := config.Images.RemoveId(bson.ObjectIdHex(imageID)) // bson.ObjectIdHex("5a2a75f777e864d018131a59")
 	if err != nil {
 		return errors.New("could not perform the operation for image " + imageID)
 	}

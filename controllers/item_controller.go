@@ -21,6 +21,20 @@ func GetItems(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"exception": exception, "data": images})
 }
 
+// GetItem ...
+func GetItem(c *gin.Context) {
+	id := c.Param("id")
+	image, err := services.GetItem(id)
+	exception := ""
+	if err != nil {
+		exception = err.Error()
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"exception": exception,
+		"data":      image,
+	})
+}
+
 // CreateItem ...
 func CreateItem(c *gin.Context) {
 	oneImage := domain.OneImage{}
@@ -32,11 +46,11 @@ func CreateItem(c *gin.Context) {
 		c.JSON(200, gin.H{"exception": exception, "data": oneImage})
 		return
 	}
-	_, err = services.CreateItem(oneImage.UserID, oneImage.Label, oneImage.Name)
+	image, err := services.CreateItem(oneImage.UserID, oneImage.Label, oneImage.Name)
 	if err != nil {
 		exception = err.Error()
 	}
-	c.JSON(200, gin.H{"exception": exception, "data": oneImage})
+	c.JSON(200, gin.H{"exception": exception, "data": image})
 }
 
 // // UpdateItem ...
