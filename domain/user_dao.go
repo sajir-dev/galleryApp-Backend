@@ -39,3 +39,15 @@ func GetUser(username string, password string) (*OneUser, error) {
 
 	return oneUser, nil
 }
+
+// GetUserByID ...
+func GetUserByID(userid string) (*OneUser, error) {
+	var user *OneUser
+	// fmt.Println("before query", userid, user)
+	err := config.Users.FindId(bson.ObjectIdHex(userid)).One(&user)
+	// fmt.Println("after query", userid, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
