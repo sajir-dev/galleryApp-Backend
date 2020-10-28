@@ -15,7 +15,7 @@ func CreateUser(username string, password string) (*OneUser, error) {
 
 	user := User{Username: username, Password: password}
 	var oneUser *OneUser
-	err := config.Users.Find(bson.M{"username": user.Username}).One(&oneUser)
+	err := config.Users.Find(bson.M{"username": user.Username}).One(&oneUser) // bson.M{"name": oneImage.Name}
 	if err == nil {
 		return nil, errors.New("Username already exists")
 	}
@@ -29,11 +29,13 @@ func CreateUser(username string, password string) (*OneUser, error) {
 	return oneUser, nil
 }
 
-// GetUser ...
-func GetUser(username string, password string) (*OneUser, error) {
+// GetUserByCred ...
+func GetUserByCred(username string, password string) (*OneUser, error) {
 	var oneUser *OneUser
-	err := config.Users.Find(bson.M{"username": user.Username}).One(&oneUser)
-	if err != nil {
+	// err := config.Users.Find(bson.M{"username": user.Username}).One(&oneUser)
+	err := config.Users.Find(bson.M{"username": username}).One(&oneUser) // bson.M{"name": oneImage.Name}
+	// fmt.Println("user from domain getuser: ", oneUser)
+	if (err != nil) || (oneUser.Password != password) {
 		return nil, err
 	}
 

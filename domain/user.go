@@ -11,7 +11,7 @@ type User struct {
 
 // OneUser ...
 type OneUser struct {
-	ID       bson.ObjectId `json:"id"  bson:"_id"`
+	UserID   bson.ObjectId `json:"id"  bson:"_id"`
 	Username string        `json:"username" bson:"username"`
 	Password string        `json:"password" bson:"password"`
 }

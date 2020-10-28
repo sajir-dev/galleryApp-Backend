@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"../domain"
 )
 
@@ -13,9 +15,10 @@ func CreateUser(username string, password string) (*domain.OneUser, error) {
 	return User, nil
 }
 
-// GetUser ...
-func GetUser(username string, password string) (*domain.OneUser, error) {
-	user, err := domain.GetUser(username, password)
+// GetUserByCred ...
+func GetUserByCred(username string, password string) (*domain.OneUser, error) {
+	user, err := domain.GetUserByCred(username, password)
+	fmt.Println("user from services", user)
 	if err != nil {
 		return nil, err
 	}
