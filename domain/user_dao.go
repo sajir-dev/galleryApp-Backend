@@ -31,12 +31,14 @@ func CreateUser(username string, password string) (*OneUser, error) {
 
 // GetUserByCred ...
 func GetUserByCred(username string, password string) (*OneUser, error) {
+	// fmt.Println("inside GetUserByCred")
 	var oneUser *OneUser
 	// err := config.Users.Find(bson.M{"username": user.Username}).One(&oneUser)
 	err := config.Users.Find(bson.M{"username": username}).One(&oneUser) // bson.M{"name": oneImage.Name}
-	// fmt.Println("user from domain getuser: ", oneUser)
+	// fmt.Println("user from domain GetUserByCred: ", oneUser)
 	if (err != nil) || (oneUser.Password != password) {
-		return nil, err
+		// fmt.Println("wrong password")
+		return nil, errors.New("Wrong password")
 	}
 
 	return oneUser, nil

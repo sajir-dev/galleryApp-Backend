@@ -2,6 +2,7 @@ package authservices
 
 import (
 	"../../domain"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // import (
@@ -142,16 +143,17 @@ import (
 // }
 
 // LoginService ...
-func LoginService(username string, password string) string {
+func LoginService(username string, password string) (string, string, error) {
 	User, err := domain.GetUserByCred(username, password)
 	// fmt.Println("from services", User)
 	if err != nil {
-		return ""
+		return "", "", err
 	}
 
 	// Generate token
-	token := GenerateToken(User.UserID)
-	return token
+	at := GenerateToken(User.UserID, User.Username)
+	rt := GenerateRefreshToken(User.UserID, User.Username)
+	return at, rt, nil
 }
 
 // SignupService ...
@@ -162,6 +164,39 @@ func SignupService(username string, password string) string {
 	}
 
 	// Generate token
-	token := GenerateToken(User.UserID)
+	token := GenerateToken(User.UserID, User.Username)
 	return token
+}
+
+// UserImagesService queries all images from the db that belongs to the userid
+func UserImagesService(userid bson.ObjectId) ([]domain.Image, error) {
+	images, err := domain.UserItems(userid)
+	if err != nil {
+		return nil, err
+	}
+	return images, err
+}
+
+// UserImageService queries single image from the db with imageid
+func UserImageService(imageid string) (*domain.Image, error) {
+	image, err := domain.UserItem(imageid)
+	if err != nil {
+		return nil, err
+	}
+	return image, err
+}
+
+// UserImageCreateService creates an image with given args
+func UserImageCreateService(userid string, label string, name string) (*domain.Image, error) {
+	image, err := domain.UserCreateItem(userid, label, name)
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
+}
+
+// DeleteImageService instantiates delete operations
+func DeleteImageService(imageid string) bool {
+	success := domain.UserDeleteItem(imageid)
+	return success
 }

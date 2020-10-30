@@ -1,7 +1,6 @@
 package authservices
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -13,16 +12,19 @@ import (
 func Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authentication")
-		fmt.Println("AuthHeader", authHeader)
+		// fmt.Println("AuthHeader", authHeader)
 		if len(authHeader) < 2 {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "17 Unauthorized Request",
+				"error": "Unauthorized Request",
 			})
 			return
 		}
 		temp := strings.Split(authHeader, "Bearer")
 		tokenString := strings.TrimSpace(temp[1])
-		fmt.Println("token string: ", tokenString) // just to see it
+		// fmt.Println("token string: ", tokenString) // just to see it
+
+		// InvalidateJWT(tokenString)
+
 		token, err := jwt.ParseWithClaims(
 			tokenString,
 			&AuthCustomClaims{},
@@ -31,17 +33,18 @@ func Authenticate() gin.HandlerFunc {
 			})
 		if err != nil {
 			c.JSON(
-				http.StatusBadRequest, gin.H{
-					"error": "Bad Request",
+				http.StatusUnauthorized, gin.H{
+					"error": "Not authorized",
 				})
 			return
 		}
 		if claims, ok := token.Claims.(*AuthCustomClaims); ok && token.Valid {
-			c.JSON(
-				http.StatusOK, gin.H{
-					"user": claims.UserId,
-				})
-			c.Set("userId", claims.UserId)
+			// c.JSON(
+			// 	http.StatusOK, gin.H{
+			// 		"user": claims.UserId,
+			// 	})
+			c.Set("userId", claims.UserID)
+			c.Set("username", claims.Username)
 			c.Next()
 			return
 		}

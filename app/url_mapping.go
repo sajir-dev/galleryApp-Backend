@@ -23,15 +23,21 @@ func mapUrls() {
 
 	router.POST("/login", authcontroller.LoginController)
 	router.POST("/signup", authcontroller.SignupController)
-
+	router.GET("/refresh", authcontroller.RefreshController)
 	auth := router.Group("/api")
 	// Refresh time can be longer than token timeout
 	// auth.GET("/refresh_token", auth.AuthMiddleware.RefreshHandler)
 	auth.Use(authservices.Authenticate())
 	{
 		auth.GET("/hello", func(c *gin.Context) {
-			fmt.Println("You are here")
+			userid := c.MustGet("userId")
+			fmt.Printf("%v, %T", userid, userid)
+
 		})
+		auth.GET("/images", authcontroller.UserImagesController)
+		auth.GET("/images/:id", authcontroller.UserImageController)
+		auth.POST("/images/", authcontroller.UserCreateImageController)
+		auth.DELETE("/images/:id", authcontroller.UserDeleteImageController)
 	}
 
 	// router.NoRoute(AuthMiddleware.MiddlewareFunc(), func(c *gin.Context) {
