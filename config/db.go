@@ -12,7 +12,7 @@ var Users *mgo.Collection
 var Images *mgo.Collection
 
 func init() {
-	db, err := mgo.Dial("mongodb://localhost/galleryapp")
+	db, err := mgo.Dial("mongodb://localhost/galleryApp-db")
 	if err != nil {
 		panic(err)
 	}
@@ -21,8 +21,8 @@ func init() {
 		panic(err)
 	}
 
-	Images = db.DB("galleryapp").C("images")
-	Users = db.DB("galleryapp").C("users")
+	Images = db.DB("galleryApp-db").C("images")
+	Users = db.DB("galleryApp-db").C("users")
 
 	fmt.Println("You connected to local mongodb")
 

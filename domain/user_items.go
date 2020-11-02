@@ -11,12 +11,12 @@ import (
 func UserItems(userid bson.ObjectId) ([]Image, error) {
 	images := []Image{}
 	// userid := string(userid)
-	fmt.Println("Images before: ", images)
-	fmt.Println(userid)
+	// fmt.Println("Images before: ", images)
+	// fmt.Println(userid)
 	stringID := userid.Hex()
 	fmt.Println(stringID)
 	err := config.Images.Find(bson.M{"user_id": stringID}).All(&images)
-	fmt.Println("Images after: ", images)
+	// fmt.Println("Images after: ", images)
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +50,8 @@ func UserCreateItem(userid string, label string, name string) (*Image, error) {
 }
 
 // UserDeleteItem deletes an image with given ID
-func UserDeleteItem(imageId string) bool {
-	err := config.Images.RemoveId(bson.ObjectIdHex(imageId))
+func UserDeleteItem(imageID string) bool {
+	err := config.Images.RemoveId(bson.ObjectIdHex(imageID))
 	if err != nil {
 		return false
 	}

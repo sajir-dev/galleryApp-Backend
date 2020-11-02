@@ -13,29 +13,79 @@ import (
 
 // LoginController ...
 func LoginController(c *gin.Context) {
-	status := http.StatusOK
-	var user *domain.User
-	err := c.ShouldBindJSON(&user)
-	// fmt.Println(user)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid details entered",
+
+	// Checking for request header
+	header := c.Request.Header.Get("Authorization")
+	fmt.Println("You are here 1")
+	if len(header) < 2 {
+		fmt.Println("You are here 1")
+		var user *domain.User
+		err := c.ShouldBindJSON(&user)
+		fmt.Println(user)
+		// fmt.Println(user)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "invalid details entered",
+			})
+			return
+		}
+		accToken, refrToken, err := authservices.LoginService(user.Username, user.Password)
+		if err != nil {
+			c.JSON(
+				http.StatusUnauthorized, gin.H{
+					"error": "invalid credentials",
+				})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"access_token":  accToken,
+			"refresh_token": refrToken,
 		})
-		return
 	}
-	accToken, refrToken, err := authservices.LoginService(user.Username, user.Password)
+
+	type Refreshtoken struct {
+		Token string `json:"refresh_token"`
+	}
+
+	temp := strings.Split(header, "Refresh")
+	tokenString := strings.TrimSpace(temp[1])
+
+	_, rt, err := authservices.RefreshHandler(tokenString)
 	if err != nil {
 		c.JSON(
 			http.StatusUnauthorized, gin.H{
-				"error": "invalid credentials",
+				"error": "Unable to authenticate",
 			})
 		return
 	}
 
-	c.JSON(status, gin.H{
-		"access_token":  accToken,
-		"refresh_token": refrToken,
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": rt,
 	})
+	return
+	// var user *domain.User
+	// err := c.ShouldBindJSON(&user)
+	// // fmt.Println(user)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"error": "invalid details entered",
+	// 	})
+	// 	return
+	// }
+	// accToken, refrToken, err := authservices.LoginService(user.Username, user.Password)
+	// if err != nil {
+	// 	c.JSON(
+	// 		http.StatusUnauthorized, gin.H{
+	// 			"error": "invalid credentials",
+	// 		})
+	// 	return
+	// }
+
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"access_token":  accToken,
+	// 	"refresh_token": refrToken,
+	// })
 }
 
 // SignupController ...
@@ -142,11 +192,11 @@ func UserDeleteImageController(c *gin.Context) {
 // RefreshController ...
 func RefreshController(c *gin.Context) {
 	type Refreshtoken struct {
-		Token string
+		Token string `json:"refresh_token"`
 	}
 	var rtBody Refreshtoken
 	err := c.ShouldBindJSON(&rtBody)
-	fmt.Println(rtBody)
+	// fmt.Println(rtBody)
 	if err != nil {
 		c.JSON(
 			http.StatusNotFound, gin.H{
@@ -156,7 +206,7 @@ func RefreshController(c *gin.Context) {
 
 	rt := rtBody.Token
 	rtString := strings.TrimSpace(rt)
-	fmt.Println(len(rtString))
+	// fmt.Println(len(rtString))
 	if len(rtString) < 2 {
 		c.JSON(
 			http.StatusNotFound, gin.H{

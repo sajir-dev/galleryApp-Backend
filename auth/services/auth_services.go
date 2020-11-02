@@ -1,6 +1,8 @@
 package authservices
 
 import (
+	"fmt"
+
 	"../../domain"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -147,6 +149,7 @@ func LoginService(username string, password string) (string, string, error) {
 	User, err := domain.GetUserByCred(username, password)
 	// fmt.Println("from services", User)
 	if err != nil {
+		fmt.Println("You are here 3")
 		return "", "", err
 	}
 
