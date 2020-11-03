@@ -1,8 +1,6 @@
 package authservices
 
 import (
-	"fmt"
-
 	"../../domain"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -149,7 +147,7 @@ func LoginService(username string, password string) (string, string, error) {
 	User, err := domain.GetUserByCred(username, password)
 	// fmt.Println("from services", User)
 	if err != nil {
-		fmt.Println("You are here 3")
+		// fmt.Println("You are here 3")
 		return "", "", err
 	}
 
@@ -202,4 +200,10 @@ func UserImageCreateService(userid string, label string, name string) (*domain.I
 func DeleteImageService(imageid string) bool {
 	success := domain.UserDeleteItem(imageid)
 	return success
+}
+
+// LogoutService ...
+func LogoutService(token string) error {
+	err := domain.BlockJWT(token)
+	return err
 }

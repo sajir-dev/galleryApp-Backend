@@ -11,7 +11,7 @@ import (
 // Authenticate ...
 func Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.Request.Header.Get("Authentication")
+		authHeader := c.Request.Header.Get("Authorization")
 		// fmt.Println("AuthHeader", authHeader)
 		if len(authHeader) < 2 {
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -31,6 +31,8 @@ func Authenticate() gin.HandlerFunc {
 			func(token *jwt.Token) (interface{}, error) {
 				return []byte(secretkey), nil
 			})
+		// fmt.Println(token)
+		// fmt.Println("Middleware error", err)
 		if err != nil {
 			c.JSON(
 				http.StatusUnauthorized, gin.H{

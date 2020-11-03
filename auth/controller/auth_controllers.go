@@ -16,12 +16,10 @@ func LoginController(c *gin.Context) {
 
 	// Checking for request header
 	header := c.Request.Header.Get("Authorization")
-	fmt.Println("You are here 1")
+	// fmt.Println(header)
 	if len(header) < 2 {
-		fmt.Println("You are here 1")
 		var user *domain.User
 		err := c.ShouldBindJSON(&user)
-		fmt.Println(user)
 		// fmt.Println(user)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -42,6 +40,7 @@ func LoginController(c *gin.Context) {
 			"access_token":  accToken,
 			"refresh_token": refrToken,
 		})
+		return
 	}
 
 	type Refreshtoken struct {
@@ -190,44 +189,63 @@ func UserDeleteImageController(c *gin.Context) {
 }
 
 // RefreshController ...
-func RefreshController(c *gin.Context) {
-	type Refreshtoken struct {
-		Token string `json:"refresh_token"`
-	}
-	var rtBody Refreshtoken
-	err := c.ShouldBindJSON(&rtBody)
-	// fmt.Println(rtBody)
+// func RefreshController(c *gin.Context) {
+// 	type Refreshtoken struct {
+// 		Token string `json:"refresh_token"`
+// 	}
+// 	var rtBody Refreshtoken
+// 	err := c.ShouldBindJSON(&rtBody)
+// 	// fmt.Println(rtBody)
+// 	if err != nil {
+// 		c.JSON(
+// 			http.StatusNotFound, gin.H{
+// 				"error": "Bad request",
+// 			})
+// 	}
+
+// 	rt := rtBody.Token
+// 	rtString := strings.TrimSpace(rt)
+// 	// fmt.Println(len(rtString))
+// 	if len(rtString) < 2 {
+// 		c.JSON(
+// 			http.StatusNotFound, gin.H{
+// 				"error": "wrong token",
+// 			})
+// 		return
+// 	}
+
+// 	accToken, refrToken, err := authservices.RefreshHandler(rtString)
+// 	if err != nil {
+// 		c.JSON(
+// 			http.StatusUnauthorized, gin.H{
+// 				"error": "Unable to authenticate",
+// 			})
+// 		return
+// 	}
+
+// 	c.JSON(
+// 		http.StatusOK, gin.H{
+// 			"access_token":  accToken,
+// 			"refresh_token": refrToken,
+// 		})
+// 	return
+// }
+
+// LogoutController ...
+func LogoutController(c *gin.Context) {
+	// token := c.Request.Header("Authorization")
+	token := c.Request.Header.Get("Authorization")
+	temp := strings.Split(token, "Bearer")
+	tokenString := strings.TrimSpace(temp[1])
+	err := authservices.LogoutService(tokenString)
 	if err != nil {
-		c.JSON(
-			http.StatusNotFound, gin.H{
-				"error": "Bad request",
-			})
-	}
-
-	rt := rtBody.Token
-	rtString := strings.TrimSpace(rt)
-	// fmt.Println(len(rtString))
-	if len(rtString) < 2 {
-		c.JSON(
-			http.StatusNotFound, gin.H{
-				"error": "wrong token",
-			})
-		return
-	}
-
-	accToken, refrToken, err := authservices.RefreshHandler(rtString)
-	if err != nil {
-		c.JSON(
-			http.StatusUnauthorized, gin.H{
-				"error": "Unable to authenticate",
-			})
-		return
-	}
-
-	c.JSON(
-		http.StatusOK, gin.H{
-			"access_token":  accToken,
-			"refresh_token": refrToken,
+		c.JSON(http.StatusOK, gin.H{
+			"error": err,
 		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"error": "",
+	})
 	return
 }

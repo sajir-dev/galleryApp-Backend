@@ -10,7 +10,7 @@ import (
 )
 
 var secretkey = "secret"
-var refreshsecret = "refreshsecret"
+var refreshsecret = "secret"
 
 // AuthCustomClaims defines the jwtclaims
 type AuthCustomClaims struct {

@@ -23,7 +23,7 @@ func mapUrls() {
 
 	router.POST("/login", authcontroller.LoginController)
 	router.POST("/signup", authcontroller.SignupController)
-	router.GET("/refresh", authcontroller.RefreshController)
+	// router.GET("/refresh", authcontroller.RefreshController)
 	auth := router.Group("/api")
 	// Refresh time can be longer than token timeout
 	// auth.GET("/refresh_token", auth.AuthMiddleware.RefreshHandler)
@@ -38,6 +38,7 @@ func mapUrls() {
 		auth.GET("/images/:id", authcontroller.UserImageController)
 		auth.POST("/images/", authcontroller.UserCreateImageController)
 		auth.DELETE("/images/:id", authcontroller.UserDeleteImageController)
+		auth.POST("/logout", authcontroller.LogoutController)
 	}
 
 	// router.NoRoute(AuthMiddleware.MiddlewareFunc(), func(c *gin.Context) {
