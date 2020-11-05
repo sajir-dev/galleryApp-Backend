@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strings"
 
+	"../../domain"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -22,8 +24,18 @@ func Authenticate() gin.HandlerFunc {
 		temp := strings.Split(authHeader, "Bearer")
 		tokenString := strings.TrimSpace(temp[1])
 		// fmt.Println("token string: ", tokenString) // just to see it
-
 		// InvalidateJWT(tokenString)
+
+		err := domain.BlockList(tokenString)
+		if err == nil {
+			// fmt.Println("you are inside the error")
+			c.JSON(
+				http.StatusUnauthorized, gin.H{
+					"error": "Not authorized",
+				})
+			c.Abort()
+			return
+		}
 
 		token, err := jwt.ParseWithClaims(
 			tokenString,
@@ -38,6 +50,7 @@ func Authenticate() gin.HandlerFunc {
 				http.StatusUnauthorized, gin.H{
 					"error": "Not authorized",
 				})
+			c.Abort()
 			return
 		}
 		if claims, ok := token.Claims.(*AuthCustomClaims); ok && token.Valid {
@@ -53,6 +66,7 @@ func Authenticate() gin.HandlerFunc {
 		c.JSON(http.StatusNotFound, gin.H{
 			"user": "",
 		})
+		c.Abort()
 		return
 	}
 }

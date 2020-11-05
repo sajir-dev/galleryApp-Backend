@@ -1,14 +1,26 @@
 package domain
 
-import "../config"
+import (
+	"fmt"
+
+	"../config"
+	"gopkg.in/mgo.v2/bson"
+)
+
+type TokenType struct {
+	Token string `json:"token" bson:"token"`
+}
 
 // BlockJWT keeps the record of logged out tokens
 func BlockJWT(tokn string) error {
-	type TokenType struct {
-		Token string `json:"string"`
-	}
-
 	t := TokenType{tokn}
 	err := config.BlackList.Insert(t)
+	return err
+}
+
+func BlockList(tokn string) error {
+	var t TokenType
+	err := config.BlackList.Find(bson.M{"token": tokn}).One(&t)
+	fmt.Println(err)
 	return err
 }

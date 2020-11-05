@@ -99,9 +99,9 @@ func SignupController(c *gin.Context) {
 		})
 		return
 	}
-	login := authservices.SignupService(user.Username, user.Password)
+	t := authservices.SignupService(user.Username, user.Password)
 	c.JSON(status, gin.H{
-		"token": login,
+		"access_token": t,
 	})
 }
 
@@ -120,7 +120,7 @@ func UserImagesController(c *gin.Context) {
 	}
 	images, err := authservices.UserImagesService(userid.(bson.ObjectId))
 	if err != nil {
-		fmt.Println("Error getting images")
+		// fmt.Println("Error getting images")
 		c.JSON(http.StatusNotFound, images)
 		return
 	}
@@ -140,7 +140,7 @@ func UserImageController(c *gin.Context) {
 	imageID := c.Param("id")
 	image, err := authservices.UserImageService(imageID)
 	if err != nil {
-		fmt.Println("Error getting the image")
+		// fmt.Println("Error getting the image")
 		c.JSON(http.StatusNotFound, image)
 		return
 	}
@@ -154,9 +154,35 @@ func UserCreateImageController(c *gin.Context) {
 		return
 	}
 	var oneImage *domain.OneImage
-	err := c.ShouldBindJSON(&oneImage)
+	// err := c.ShouldBindJSON(&oneImage)
+
+	//form-data processing
+	file, err := c.FormFile("file")
 	if err != nil {
-		fmt.Println("could not bind json body to the image struct")
+		fmt.Println("no file attached")
+		c.JSON(http.StatusBadRequest,
+			gin.H{
+				"error": "no file found",
+			})
+		return
+	}
+	label, _ := c.GetPostForm("label")
+	userid, _ := c.GetPostForm("user_id")
+	fmt.Printf("%v %T", label, label)
+	err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
+	if err != nil {
+		fmt.Println("could not save file")
+		c.JSON(http.StatusBadRequest,
+			gin.H{
+				"error": "could not save file",
+			})
+		return
+	}
+
+	oneImage = &domain.OneImage{UserID: userid, Label: label, Name: file.Filename}
+
+	if err != nil {
+		// fmt.Println("could not bind json body to the image struct")
 		return
 	}
 

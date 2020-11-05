@@ -38,7 +38,7 @@ func mapUrls() {
 		auth.GET("/images/:id", authcontroller.UserImageController)
 		auth.POST("/images/", authcontroller.UserCreateImageController)
 		auth.DELETE("/images/:id", authcontroller.UserDeleteImageController)
-		auth.POST("/logout", authcontroller.LogoutController)
+		auth.GET("/logout", authcontroller.LogoutController)
 	}
 
 	// router.NoRoute(AuthMiddleware.MiddlewareFunc(), func(c *gin.Context) {

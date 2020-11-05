@@ -39,7 +39,7 @@ func GenerateToken(userID bson.ObjectId, username string) string {
 	at, err := token.SignedString([]byte(secretkey))
 	// fmt.Println(t)
 	if err != nil {
-		fmt.Println("could not sign the token")
+		// fmt.Println("could not sign the token")
 		panic(err)
 	}
 
