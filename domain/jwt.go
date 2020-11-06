@@ -18,6 +18,7 @@ func BlockJWT(tokn string) error {
 	return err
 }
 
+// BlockList checks if the given token is already bblack listed or not
 func BlockList(tokn string) error {
 	var t TokenType
 	err := config.BlackList.Find(bson.M{"token": tokn}).One(&t)

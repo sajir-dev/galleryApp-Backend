@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"../../domain"
 	authservices "../services"
@@ -157,6 +158,7 @@ func UserCreateImageController(c *gin.Context) {
 	// err := c.ShouldBindJSON(&oneImage)
 
 	//form-data processing
+	c.Request.ParseMultipartForm(10 << 20)
 	file, err := c.FormFile("file")
 	if err != nil {
 		fmt.Println("no file attached")
@@ -168,8 +170,13 @@ func UserCreateImageController(c *gin.Context) {
 	}
 	label, _ := c.GetPostForm("label")
 	userid, _ := c.GetPostForm("user_id")
-	fmt.Printf("%v %T", label, label)
-	err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
+	// fmt.Printf("%v %T", label, label)
+
+	fn := strings.Split(file.Filename, ".")
+	fnn := fn[0] + fmt.Sprint(time.Now().Unix()) + "." + fn[1]
+	// fmt.Println(fnn)
+
+	err = c.SaveUploadedFile(file, "uploads/"+fnn)
 	if err != nil {
 		fmt.Println("could not save file")
 		c.JSON(http.StatusBadRequest,
@@ -179,7 +186,7 @@ func UserCreateImageController(c *gin.Context) {
 		return
 	}
 
-	oneImage = &domain.OneImage{UserID: userid, Label: label, Name: file.Filename}
+	oneImage = &domain.OneImage{UserID: userid, Label: label, Name: fnn}
 
 	if err != nil {
 		// fmt.Println("could not bind json body to the image struct")

@@ -5,24 +5,26 @@ import (
 
 	authcontroller "../auth/controller"
 	authservices "../auth/services"
-	"../controllers"
 	"github.com/gin-gonic/gin"
 )
 
 func mapUrls() {
-	router.GET("/images/", controllers.GetItems)
-	router.GET("/images/:id", controllers.GetItem)
-	router.POST("/images/", controllers.CreateItem)
-	router.DELETE("/images/:id", controllers.DeleteItem)
+	// router.GET("/images/", controllers.GetItems)
+	// router.GET("/images/:id", controllers.GetItem)
+	// router.POST("/images/", controllers.CreateItem)
+	// router.DELETE("/images/:id", controllers.DeleteItem)
 
 	// router.GET("/users/", controllers.GetItems)
-	router.GET("/users/:id", controllers.GetUserById)
-	router.POST("/users/", controllers.CreateUser)
-	router.POST("/users/test", controllers.GetUserByCred)
+	// router.GET("/users/:id", controllers.GetUserById)
+	// router.POST("/users/", controllers.CreateUser)
+	// router.POST("/users/test", controllers.GetUserByCred)
 	// router.DELETE("/images/:id", controllers.DeleteItem)
 
 	router.POST("/login", authcontroller.LoginController)
 	router.POST("/signup", authcontroller.SignupController)
+	router.GET("/ok", func(c *gin.Context) {
+		c.String(200, "Hey I'm working...")
+	})
 	// router.GET("/refresh", authcontroller.RefreshController)
 	auth := router.Group("/api")
 	// Refresh time can be longer than token timeout
@@ -31,8 +33,8 @@ func mapUrls() {
 	{
 		auth.GET("/hello", func(c *gin.Context) {
 			userid := c.MustGet("userId")
-			fmt.Printf("%v, %T", userid, userid)
-
+			s := fmt.Sprint("Hello ", userid)
+			c.String(200, s)
 		})
 		auth.GET("/images", authcontroller.UserImagesController)
 		auth.GET("/images/:id", authcontroller.UserImageController)

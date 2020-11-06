@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"os"
 
 	"../config"
 	"gopkg.in/mgo.v2/bson"
@@ -17,6 +18,10 @@ func UserItems(userid bson.ObjectId) ([]Image, error) {
 	fmt.Println(stringID)
 	err := config.Images.Find(bson.M{"user_id": stringID}).All(&images)
 	// fmt.Println("Images after: ", images)
+	for _, image := range images {
+		image.Name = "http://52.66.84.61/" + image.Name
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -51,9 +56,19 @@ func UserCreateItem(userid string, label string, name string) (*Image, error) {
 
 // UserDeleteItem deletes an image with given ID
 func UserDeleteItem(imageID string) bool {
-	err := config.Images.RemoveId(bson.ObjectIdHex(imageID))
+	var image *Image
+	err := config.Images.FindId(bson.ObjectIdHex(imageID)).One(&image)
 	if err != nil {
 		return false
 	}
+
+	err = config.Images.RemoveId(bson.ObjectIdHex(imageID))
+	if err != nil {
+		return false
+	}
+
+	errDel := os.Remove("uploads/" + image.Name)
+	fmt.Println(errDel)
+
 	return true
 }
