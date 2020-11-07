@@ -120,6 +120,7 @@ func UserImagesController(c *gin.Context) {
 		return
 	}
 	images, err := authservices.UserImagesService(userid.(bson.ObjectId))
+	fmt.Println(images)
 	if err != nil {
 		// fmt.Println("Error getting images")
 		c.JSON(http.StatusNotFound, images)

@@ -8,9 +8,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+var URL string = "http://52.66.84.61/"
+
 // UserItems ...
 func UserItems(userid bson.ObjectId) ([]Image, error) {
-	images := []Image{}
+	var images []Image
 	// userid := string(userid)
 	// fmt.Println("Images before: ", images)
 	// fmt.Println(userid)
@@ -18,10 +20,11 @@ func UserItems(userid bson.ObjectId) ([]Image, error) {
 	fmt.Println(stringID)
 	err := config.Images.Find(bson.M{"user_id": stringID}).All(&images)
 	// fmt.Println("Images after: ", images)
-	for _, image := range images {
-		image.Name = "http://52.66.84.61/" + image.Name
+	for i := range images {
+		images[i].Name = URL + images[i].Name
+		// fmt.Println(image.Name)
 	}
-
+	fmt.Println("Images after: ", images)
 	if err != nil {
 		return nil, err
 	}
@@ -32,6 +35,7 @@ func UserItems(userid bson.ObjectId) ([]Image, error) {
 func UserItem(imageid string) (*Image, error) {
 	var image *Image
 	err := config.Images.FindId(bson.ObjectIdHex(imageid)).One(&image)
+	image.Name = URL + image.Name
 	if err != nil {
 		return nil, err
 	}

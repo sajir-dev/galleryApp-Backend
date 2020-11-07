@@ -1,6 +1,8 @@
 package authservices
 
 import (
+	"fmt"
+
 	"../../domain"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -184,6 +186,7 @@ func UserImageService(imageid string) (*domain.Image, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(image)
 	return image, err
 }
 
