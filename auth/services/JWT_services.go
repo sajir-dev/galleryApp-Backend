@@ -26,7 +26,7 @@ func GenerateToken(userID bson.ObjectId, username string) string {
 		userID,
 		username,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 48).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 		},
 	}
 

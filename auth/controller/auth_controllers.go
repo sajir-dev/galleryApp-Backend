@@ -100,9 +100,15 @@ func SignupController(c *gin.Context) {
 		})
 		return
 	}
-	t := authservices.SignupService(user.Username, user.Password)
+	at, rt, err := authservices.SignupService(user.Username, user.Password)
+	if err != nil {
+		c.JSON(status, gin.H{
+			"error": err,
+		})
+	}
 	c.JSON(status, gin.H{
-		"access_token": t,
+		"access_token":  at,
+		"refresh_token": rt,
 	})
 }
 

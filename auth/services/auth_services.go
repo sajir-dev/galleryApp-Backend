@@ -160,15 +160,16 @@ func LoginService(username string, password string) (string, string, error) {
 }
 
 // SignupService ...
-func SignupService(username string, password string) string {
+func SignupService(username string, password string) (string, string, error) {
 	User, err := domain.CreateUser(username, password)
 	if err != nil {
-		return ""
+		return "", "", err
 	}
 
 	// Generate token
-	token := GenerateToken(User.UserID, User.Username)
-	return token
+	at := GenerateToken(User.UserID, User.Username)
+	rt := GenerateRefreshToken(User.UserID, User.Username)
+	return at, rt, nil
 }
 
 // UserImagesService queries all images from the db that belongs to the userid

@@ -15,12 +15,13 @@ var (
 // StartApp ...
 func StartApp() {
 	port := os.Getenv("PORT")
+	router.Use(CORS())
+
 	mapUrls()
 
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	// router.Use(cors.Default())
-	router.Use(CORS())
 
 	if port == "" {
 		port = "80"
