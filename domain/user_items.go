@@ -8,7 +8,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var URL string = "http://52.66.84.61/"
+var URL string = "http://52.66.84.61/images/"
 
 // UserItems ...
 func UserItems(userid bson.ObjectId) ([]Image, error) {
@@ -17,14 +17,14 @@ func UserItems(userid bson.ObjectId) ([]Image, error) {
 	// fmt.Println("Images before: ", images)
 	// fmt.Println(userid)
 	stringID := userid.Hex()
-	fmt.Println(stringID)
+	// fmt.Println(stringID)
 	err := config.Images.Find(bson.M{"user_id": stringID}).All(&images)
 	// fmt.Println("Images after: ", images)
 	for i := range images {
 		images[i].Name = URL + images[i].Name
 		// fmt.Println(image.Name)
 	}
-	fmt.Println("Images after: ", images)
+	// fmt.Println("Images after: ", images)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func UserDeleteItem(imageID string) bool {
 		return false
 	}
 
-	errDel := os.Remove("uploads/" + image.Name)
+	errDel := os.Remove("/home/ubuntu/uploads/" + image.Name)
 	fmt.Println(errDel)
 
 	return true

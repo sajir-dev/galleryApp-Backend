@@ -20,6 +20,8 @@ func mapUrls() {
 	// router.POST("/users/test", controllers.GetUserByCred)
 	// router.DELETE("/images/:id", controllers.DeleteItem)
 
+	router.Static("/images", "/home/ubuntu/uploads")
+
 	router.POST("/login", authcontroller.LoginController)
 	router.POST("/signup", authcontroller.SignupController)
 	router.GET("/ok", func(c *gin.Context) {

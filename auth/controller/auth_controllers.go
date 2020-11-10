@@ -177,18 +177,19 @@ func UserCreateImageController(c *gin.Context) {
 	}
 	label, _ := c.GetPostForm("label")
 	userid, _ := c.GetPostForm("user_id")
-	// fmt.Printf("%v %T", label, label)
+	fmt.Printf("%v %T", label, label)
 
 	fn := strings.Split(file.Filename, ".")
 	fnn := fn[0] + fmt.Sprint(time.Now().Unix()) + "." + fn[1]
-	// fmt.Println(fnn)
+	fmt.Println(fnn)
 
-	err = c.SaveUploadedFile(file, "uploads/"+fnn)
+	err = c.SaveUploadedFile(file, "/home/ubuntu/uploads/"+fnn)
 	if err != nil {
 		fmt.Println("could not save file")
 		c.JSON(http.StatusBadRequest,
 			gin.H{
-				"error": "could not save file",
+				"error":  "could not save file",
+				"error2": err,
 			})
 		return
 	}
